@@ -1,0 +1,584 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - MandiBhavv{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">Admin Dashboard</h3>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="update-prices-tab" data-bs-toggle="tab"
+                            data-bs-target="#update-prices" type="button" role="tab" aria-controls="update-prices"
+                            aria-selected="true">Update Prices</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="manage-produce-tab" data-bs-toggle="tab" data-bs-target="#manage-produce"
+                            type="button" role="tab" aria-controls="manage-produce" aria-selected="false">Manage Produce</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="manage-markets-tab" data-bs-toggle="tab" data-bs-target="#manage-markets"
+                            type="button" role="tab" aria-controls="manage-markets" aria-selected="false">Manage Markets</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="manage-states-cities-tab" data-bs-toggle="tab" data-bs-target="#manage-states-cities"
+                            type="button" role="tab" aria-controls="manage-states-cities" aria-selected="false">Manage States & Cities</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" href="{{ url_for('admin_ads') }}">Manage Ads</a>
+                    </li>
+                </ul>
+                
+                <div class="tab-content p-3" id="adminTabsContent">
+                    <!-- Update Prices Tab -->
+                    <div class="tab-pane fade show active" id="update-prices" role="tabpanel"
+                        aria-labelledby="update-prices-tab">
+                        <form action="{{ url_for('update_price') }}" method="post" class="row g-3">
+                            <div class="col-md-4">
+                                <label for="marketSelect" class="form-label">Market</label>
+                                <select class="form-select" id="marketSelect" name="market_id" required>
+                                    <option value="">Select Market</option>
+                                    {% for market in markets %}
+                                    <option value="{{ market.id }}">{{ market.name }} ({{ market.city.name }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="produceSelect" class="form-label">Vegetable/Fruit</label>
+                                <select class="form-select" id="produceSelect" name="produce_id" required>
+                                    <option value="">Select Produce</option>
+                                    <optgroup label="Vegetables">
+                                        {% for produce in produce_types if produce.category == 'vegetable' %}
+                                        <option value="{{ produce.id }}">{{ produce.name }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                    <optgroup label="Fruits">
+                                        {% for produce in produce_types if produce.category == 'fruit' %}
+                                        <option value="{{ produce.id }}">{{ produce.name }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="price" class="form-label">Price (₹/kg)</label>
+                                <input type="number" class="form-control" id="price" name="price" step="0.01" min="0"
+                                    required>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-success">Update Price</button>
+                            </div>
+                        </form>
+                        
+                        <hr>
+                        
+                        <!-- Current Prices Table -->
+                        <div class="mt-4">
+                            <h5>Filter Current Prices</h5>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <select class="form-select" id="filterMarket">
+                                        <option value="">All Markets</option>
+                                        {% for market in markets %}
+                                        <option value="{{ market.id }}">{{ market.name }} ({{ market.city.name }})</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" id="filterProduce">
+                                        <option value="">All Produce</option>
+                                        <optgroup label="Vegetables">
+                                            {% for produce in produce_types if produce.category == 'vegetable' %}
+                                            <option value="{{ produce.id }}">{{ produce.name }}</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                        <optgroup label="Fruits">
+                                            {% for produce in produce_types if produce.category == 'fruit' %}
+                                            <option value="{{ produce.id }}">{{ produce.name }}</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-primary" id="filterPricesBtn">Filter</button>
+                                </div>
+                            </div>
+                            
+                            <table class="table table-striped" id="pricesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Market</th>
+                                        <th>Produce</th>
+                                        <th>Price (₹/kg)</th>
+                                        <th>Last Updated</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pricesTableBody">
+                                    <!-- This will be populated via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Manage Produce Tab -->
+                    <div class="tab-pane fade" id="manage-produce" role="tabpanel" aria-labelledby="manage-produce-tab">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="card">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">Add New Produce</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="{{ url_for('add_produce') }}" method="post" enctype="multipart/form-data"
+                                            class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="produceName" class="form-label">Name</label>
+                                                <input type="text" class="form-control" id="produceName" name="name" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="produceCategory" class="form-label">Category</label>
+                                                <select class="form-select" id="produceCategory" name="category" required>
+                                                    <option value="vegetable">Vegetable</option>
+                                                    <option value="fruit">Fruit</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label for="produceImage" class="form-label">Image</label>
+                                                <input type="file" class="form-control" id="produceImage" name="image" accept="image/*"
+                                                    required>
+                                            </div>
+                                            <div class="col-12">
+                                                <button type="submit" class="btn btn-success">Add New Produce</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-7">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">
+                                        <h5 class="mb-0">Existing Produce</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <input type="text" class="form-control" id="produceSearch" placeholder="Search produce...">
+                                        </div>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Image</th>
+                                                    <th>Name</th>
+                                                    <th>Category</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for produce in produce_types %}
+                                                <tr>
+                                                    <td>
+                                                        <img src="{{ url_for('static', filename='uploads/' + produce.image) }}" alt="{{ produce.name }}" height="50">
+                                                    </td>
+                                                    <td>{{ produce.name }}</td>
+                                                    <td>{{ produce.category|capitalize }}</td>
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <a href="{{ url_for('edit_produce', produce_id=produce.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                                            <form action="{{ url_for('delete_produce', produce_id=produce.id) }}" method="post" class="d-inline">
+                                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this produce? This will also delete all price listings associated with it.')">Delete</button>
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manage Markets Tab -->
+                    <div class="tab-pane fade" id="manage-markets" role="tabpanel" aria-labelledby="manage-markets-tab">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="card">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">Add New Market</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="{{ url_for('add_market') }}" method="post" class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="marketName" class="form-label">Market Name</label>
+                                                <input type="text" class="form-control" id="marketName" name="name" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="marketCity" class="form-label">City</label>
+                                                <select class="form-select" id="marketCity" name="city_id" required>
+                                                    <option value="">Select City</option>
+                                                    {% for city in cities %}
+                                                    <option value="{{ city.id }}">{{ city.name }} ({{ city.state.name }})</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-12">
+                                                <button type="submit" class="btn btn-success">Add New Market</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-7">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">
+                                        <h5 class="mb-0">Existing Markets</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <input type="text" class="form-control" id="marketSearch" placeholder="Search markets...">
+                                        </div>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>City</th>
+                                                    <th>State</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for market in markets %}
+                                                <tr>
+                                                    <td>{{ market.name }}</td>
+                                                    <td>{{ market.city.name }}</td>
+                                                    <td>{{ market.city.state.name }}</td>
+                                                    <td>
+                                                        <form action="{{ url_for('delete_market', market_id=market.id) }}" method="post" class="d-inline">
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this market? This will also delete all price listings for this market.')">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manage States & Cities Tab -->
+                    <div class="tab-pane fade" id="manage-states-cities" role="tabpanel" aria-labelledby="manage-states-cities-tab">
+                        <div class="row">
+                            <!-- States Section -->
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">Manage States</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="{{ url_for('add_state') }}" method="post" class="row g-3 mb-3">
+                                            <div class="col-md-8">
+                                                <label for="stateName" class="form-label">State Name</label>
+                                                <input type="text" class="form-control" id="stateName" name="name" required>
+                                            </div>
+                                            <div class="col-md-4 d-flex align-items-end">
+                                                <button type="submit" class="btn btn-success w-100">Add State</button>
+                                            </div>
+                                        </form>
+                                        
+                                        <hr>
+                                        
+                                        <h6>Existing States</h6>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Cities</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for state in states %}
+                                                <tr>
+                                                    <td>{{ state.name }}</td>
+                                                    <td>{{ state.cities|length }}</td>
+                                                    <td>
+                                                        <form action="{{ url_for('delete_state', state_id=state.id) }}" method="post" class="d-inline">
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this state? You must first delete all cities in this state.')">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Cities Section -->
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-info text-white">
+                                        <h5 class="mb-0">Manage Cities</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="{{ url_for('add_city') }}" method="post" class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label for="city_name" class="form-label">City Name</label>
+                                                <input type="text" class="form-control" id="city_name" name="name" required>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="state_id">State</label>
+                                                <select class="form-control" id="state_id" name="state_id" required>
+                                                    {% for state in states %}
+                                                    <option value="{{ state.id }}">{{ state.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-end">
+                                                <button type="submit" class="btn btn-success w-100">Add</button>
+                                            </div>
+                                        </form>
+                                        
+                                        <hr>
+                                        
+                                        <h6>Existing Cities</h6>
+                                        <div class="mb-3">
+                                            <input type="text" class="form-control" id="citySearch" placeholder="Search cities...">
+                                        </div>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>State</th>
+                                                    <th>Markets</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for city in cities %}
+                                                <tr>
+                                                    <td>{{ city.name }}</td>
+                                                    <td>{{ city.state.name }}</td>
+                                                    <td>{{ city.markets|length }}</td>
+                                                    <td>
+                                                        <form action="{{ url_for('delete_city', city_id=city.id) }}" method="post" class="d-inline">
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this city? You must first delete all markets in this city.')">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- News Updates Management Section -->
+                    <div class="card mt-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Manage News Updates</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>Add New Update</h6>
+                            <form action="{{ url_for('admin_add_news') }}" method="post">
+                                <div class="mb-3">
+                                    <label for="news_title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="news_title" name="title" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="news_content" class="form-label">Content</label>
+                                    <textarea class="form-control" id="news_content" name="content" rows="4"
+                                        required></textarea>
+                                    <small class="text-muted">You can use basic HTML for formatting.</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add Update</button>
+                            </form>
+                          
+                            <hr>
+
+                            <h6 class="mt-4">Current Updates</h6>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Date Posted</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for update in news_updates %}
+                                    <tr>
+                                        <td>{{ update.title }}</td>
+                                        <td>{{ update.date_posted.strftime('%d %b, %Y') }}</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="{{ url_for('admin_edit_news', news_id=update.id) }}"
+                                                    class="btn btn-sm btn-primary" >Edit</a>
+                                                <form action="{{ url_for('admin_toggle_news', news_id=update.id) }}"
+                                                    method="post" class="d-inline">
+                                                    <button type="submit"
+                                                        class="btn btn-sm {% if update.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %} " >
+                                                        {% if update.is_active %}Deactivate{% else %}Activate{% endif %}
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Dynamic Filtering -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality for produce
+        document.getElementById('produceSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const produceRows = document.querySelectorAll('#manage-produce table tbody tr');
+            
+            produceRows.forEach(row => {
+                const produceName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const produceCategory = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                
+                if (produceName.includes(searchTerm) || produceCategory.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Search functionality for markets
+        document.getElementById('marketSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const marketRows = document.querySelectorAll('#manage-markets table tbody tr');
+            
+            marketRows.forEach(row => {
+                const marketName = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                const cityName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const stateName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                
+                if (marketName.includes(searchTerm) || cityName.includes(searchTerm) || stateName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Search functionality for cities
+        document.getElementById('citySearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const cityRows = document.querySelectorAll('#manage-states-cities table:last-of-type tbody tr');
+            
+            cityRows.forEach(row => {
+                const cityName = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                const stateName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                
+                if (cityName.includes(searchTerm) || stateName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        function loadPriceListings() {
+    const marketId = document.getElementById('filterMarket').value;
+    const produceId = document.getElementById('filterProduce').value;
+    
+    // This would be an AJAX request in a real application
+    fetch(`/api/price_listings?market_id=${marketId}&produce_id=${produceId}`)
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('pricesTableBody');
+            tableBody.innerHTML = '';
+            
+            data.listings.forEach(listing => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${listing.market_name}</td>
+                    <td>${listing.produce_name}</td>
+                    <td>₹${listing.price}</td>
+                    <td>${new Date(listing.last_updated).toLocaleString()}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-warning edit-price" 
+                                data-market="${listing.market_id}" 
+                                data-produce="${listing.produce_id}" 
+                                data-price="${listing.price}">Edit</button>
+                            <form action="/admin/delete_listing/${listing.market_id}/${listing.produce_id}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger" 
+                                    onclick="return confirm('Are you sure you want to delete this price listing?')">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners to edit buttons
+            document.querySelectorAll('.edit-price').forEach(button => {
+                button.addEventListener('click', function() {
+                    const marketId = this.getAttribute('data-market');
+                    const produceId = this.getAttribute('data-produce');
+                    const price = this.getAttribute('data-price');
+                    
+                    // Fill the form with the values
+                    document.getElementById('marketSelect').value = marketId;
+                    document.getElementById('produceSelect').value = produceId;
+                    document.getElementById('price').value = price;
+                    
+                    // Scroll to the form
+                    document.getElementById('update-prices-tab').scrollIntoView();
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching price listings:', error);
+            document.getElementById('pricesTableBody').innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center">Failed to load price listings. Please try again.</td>
+                </tr>
+            `;
+        });
+}
+
+// Initial load of price listings
+loadPriceListings();
+
+// Add event listener to the filter button
+document.getElementById('filterPricesBtn').addEventListener('click', function() {
+    loadPriceListings();
+});
+
+// Add event listener for tab changes
+document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+    tab.addEventListener('shown.bs.tab', function(event) {
+        if (event.target.id === 'update-prices-tab') {
+            loadPriceListings();
+        }
+    });
+});
+});
+</script>
+
+
+{% endblock %}

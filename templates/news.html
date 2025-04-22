@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Latest Updates - MandiBhavv{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-success mb-4">Latest Updates</h1>
+    
+    {% if news_updates %}
+        {% for update in news_updates %}
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="text-success mb-0">{{ update.title }}</h5>
+                        <small class="text-muted">{{ update.date_posted.strftime('%d %b, %Y') }}</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>{{ update.content|safe }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">No updates available at the moment.</div>
+    {% endif %}
+</div>
+{% endblock %}

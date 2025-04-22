@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Produce - MandiBhavv Admin{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">Edit Produce</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('edit_produce', produce_id=produce.id) }}" method="post" enctype="multipart/form-data" class="row g-3">
+                    <div class="col-md-6">
+                        <label for="produceName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="produceName" name="name" value="{{ produce.name }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="produceCategory" class="form-label">Category</label>
+                        <select class="form-select" id="produceCategory" name="category" required>
+                            <option value="vegetable" {% if produce.category == 'vegetable' %}selected{% endif %}>Vegetable</option>
+                            <option value="fruit" {% if produce.category == 'fruit' %}selected{% endif %}>Fruit</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="produceImage" class="form-label">Current Image</label>
+                        <div>
+                            <img src="{{ url_for('static', filename='uploads/' + produce.image) }}" alt="{{ produce.name }}" class="img-thumbnail" style="max-height: 150px;">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="newImage" class="form-label">New Image (leave empty to keep current)</label>
+                        <input type="file" class="form-control" id="newImage" name="image" accept="image/*">
+                    </div>
+                    <div class="col-12 mt-4">
+                        <button type="submit" class="btn btn-success">Update Produce</button>
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

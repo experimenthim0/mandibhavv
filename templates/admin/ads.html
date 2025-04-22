@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Advertisements - MandiBhavv{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">Advertisement Management</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h4>Add New Advertisement</h4>
+                    <form action="{{ url_for('admin_add_ad') }}" method="post" enctype="multipart/form-data" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="adTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="adTitle" name="title" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="adImage" class="form-label">Image</label>
+                            <input type="file" class="form-control" id="adImage" name="image" accept="image/*" required>
+                            <small class="text-muted">Recommended size: 800x200px for homepage banners</small>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="adPosition" class="form-label">Position</label>
+                            <select class="form-select" id="adPosition" name="position">
+                                <option value="homepage">Homepage Banner</option>
+                                <option value="sidebar">Sidebar</option>
+                                <option value="footer">Footer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="adLink" class="form-label">Link URL (optional)</label>
+                            <input type="url" class="form-control" id="adLink" name="link_url" placeholder="https://...">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="adEndDate" class="form-label">End Date (optional)</label>
+                            <input type="date" class="form-control" id="adEndDate" name="end_date">
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success">Add Advertisement</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <hr>
+                
+                <div class="mt-4">
+                    <h4>Current Advertisements</h4>
+                    {% if ads %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Title</th>
+                                        <th>Position</th>
+                                        <th>Status</th>
+                                        <th>Date Added</th>
+                                        <th>End Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ad in ads %}
+                                    <tr>
+                                        <td>
+                                            <img src="{{ url_for('static', filename='uploads/' + ad.image) }}" alt="{{ ad.title }}" style="height: 50px;">
+                                        </td>
+                                        <td>{{ ad.title }}</td>
+                                        <td>{{ ad.position|capitalize }}</td>
+                                        <td>
+                                            <span class="badge {% if ad.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                                {% if ad.is_active %}Active{% else %}Inactive{% endif %}
+                                            </span>
+                                        </td>
+                                        <td>{{ ad.date_created.strftime('%d-%m-%Y') }}</td>
+                                        <td>{{ ad.end_date.strftime('%d-%m-%Y') if ad.end_date else 'No end date' }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <form action="{{ url_for('admin_toggle_ad', ad_id=ad.id) }}" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm {% if ad.is_active %}btn-warning{% else %}btn-success{% endif %}">
+                                                        {% if ad.is_active %}Deactivate{% else %}Activate{% endif %}
+                                                    </button>
+                                                </form>
+                                                <form action="{{ url_for('admin_delete_ad', ad_id=ad.id) }}" method="post" class="d-inline ms-1"
+                                                    onsubmit="return confirm('Are you sure you want to delete this advertisement?');">
+                                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">No advertisements have been added yet.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

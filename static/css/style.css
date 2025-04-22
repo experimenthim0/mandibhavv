@@ -1,0 +1,161 @@
+/* static/css/style.css */
+
+:root {
+    --mb-green: #2e7d32;
+    --mb-yellow: #ffd600;
+    --mb-light-green: #4caf50;
+    --mb-dark-green: #1b5e20;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ffffff;
+    color: #333;
+}
+
+/* Navigation */
+.navbar-brand {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--mb-yellow);
+}
+
+/* Cards */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    border: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    font-weight: 600;
+    border-bottom: none;
+}
+
+.bg-success {
+    background-color: var(--mb-green) !important;
+}
+.btn-primary{
+    background-color: var(--mb-green) !important;
+    outline:var(--mb-green);
+}
+.text-success {
+    color: var(--mb-green) !important;
+}
+.bg-primary{
+    background-color: var(--mb-green) !important;
+}
+.btn-success {
+    background-color: var(--mb-green);
+    border-color: var(--mb-green);
+}
+
+.btn-success:hover {
+    background-color: var(--mb-dark-green);
+    border-color: var(--mb-dark-green);
+}
+
+.btn-outline-light:hover {
+    color: var(--mb-green);
+}
+
+.badge.bg-warning {
+    background-color: var(--mb-yellow) !important;
+}
+
+/* Form elements */
+.form-control:focus, .form-select:focus {
+    border-color: var(--mb-light-green);
+    box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
+}
+
+/* Tabs */
+.nav-tabs .nav-link {
+    color: #555;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--mb-green);
+    font-weight: 600;
+}
+
+/* Footer */
+footer {
+    border-top: 5px solid var(--mb-green);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .col-md-3 {
+        margin-bottom: 15px;
+    }
+    
+    #locationSelector button {
+        margin-top: 10px;
+    }
+    
+    /* Make ad images responsive on smaller screens */
+    .carousel-item img {
+        height: 150px !important;
+    }
+}
+
+
+/* Add this to your CSS file or in a <style> tag in the head section */
+.nav-pills .nav-link.active {
+    background-color: #198754 !important; /* Bootstrap's success green */
+}
+
+.nav-pills .nav-link:not(.active):hover {
+    color: #1f7023;
+}
+
+.nav-link {
+    color: #2e7d32;
+}
+
+/* Change accordion button focus and active states */
+.accordion-button:not(.collapsed) {
+    background-color: #e8f5e9 !important; /* Light green background */
+    color:#2e7d32 !important;
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.125);
+}
+
+.accordion-button:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}
+
+/* Override primary button colors */
+.btn-primary {
+    background-color: #2e7d32;
+    border-color: #2e7d32;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #2e7d32;
+    border-color: #2e7d32;
+}
+
+/* Override form control focus */
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}

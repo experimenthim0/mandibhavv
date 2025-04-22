@@ -1,0 +1,393 @@
+<!-- templates/help.html -->
+{% extends 'base.html' %}
+
+{% block title %}Krishi Help - MandiBhavv{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">Krishi Help Center</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            <button class="nav-link active" id="about-tab" data-bs-toggle="pill" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="true">About MandiBhavv</button>
+                            <button class="nav-link" id="usage-tab" data-bs-toggle="pill" data-bs-target="#usage" type="button" role="tab" aria-controls="usage" aria-selected="false">How to Use</button>
+                            <button class="nav-link" id="mandi-tab" data-bs-toggle="pill" data-bs-target="#mandi" type="button" role="tab" aria-controls="mandi" aria-selected="false">Understanding Mandis</button>
+                            <button class="nav-link" id="seasonal-tab" data-bs-toggle="pill" data-bs-target="#seasonal" type="button" role="tab" aria-controls="seasonal" aria-selected="false">Seasonal Guide</button>
+                            <button class="nav-link" id="faq-tab" data-bs-toggle="pill" data-bs-target="#faq" type="button" role="tab" aria-controls="faq" aria-selected="false">FAQs</button>
+                            <button class="nav-link" id="contact-tab" data-bs-toggle="pill" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact Us</button>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="tab-content p-3" id="v-pills-tabContent">
+                            <!-- About MandiBhavv -->
+                            <div class="tab-pane fade show active" id="about" role="tabpanel" aria-labelledby="about-tab">
+                                <h4 class="text-success">About MandiBhavv</h4>
+                                <hr>
+                                <p>MandiBhavv is a comprehensive web application designed to provide real-time vegetable and fruit prices from various markets (mandis) across Rajasthan. Our mission is to empower farmers, traders, and consumers with transparent pricing information.</p>
+                                
+                                <h5 class="mt-4">Key Features:</h5>
+                                <ul>
+                                    <li>Real-time market prices from local mandis across Rajasthan</li>
+                                    <li>Search functionality for specific vegetables and fruits</li>
+                                    <li>City and market-specific pricing information</li>
+                                    <li>Visual presentation with product images</li>
+                                    <li>Regularly updated pricing information</li>
+                                </ul>
+                                
+                                <div class="alert alert-success mt-4">
+                                    <strong>आपका अपना मंडी भाव जानकारी केंद्र!</strong><br>
+                                    (Your own mandi price information center!)
+                                </div>
+                            </div>
+                            
+                            <!-- How to Use -->
+                            <div class="tab-pane fade" id="usage" role="tabpanel" aria-labelledby="usage-tab">
+                                <h4 class="text-success">How to Use MandiBhavv</h4>
+                                <hr>
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Step 1: Select Your Location</h5>
+                                        <p>From the homepage, select your state (default: Rajasthan), then choose your city from the dropdown menu.</p>
+                                        <img src="{{ url_for('static', filename='images/help/step1.png') }}" alt="Step 1" class="img-fluid border rounded">
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Step 2: Select Your Nearest Mandi</h5>
+                                        <p>After selecting your city, choose the specific market (mandi) you want to check prices for.</p>
+                                        <img src="{{ url_for('static', filename='images/help/step2.png') }}" alt="Step 2" class="img-fluid border rounded">
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Step 3: Browse or Search for Products</h5>
+                                        <p>View all available products or use the search box to find specific vegetables or fruits.</p>
+                                        <img src="{{ url_for('static', filename='images/help/step3.png') }}" alt="Step 3" class="img-fluid border rounded">
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info">
+                                    <strong>Tip:</strong> Prices are updated daily. Check back regularly for the most current information.
+                                </div>
+                            </div>
+                            
+                            <!-- Understanding Mandis -->
+                            <div class="tab-pane fade" id="mandi" role="tabpanel" aria-labelledby="mandi-tab">
+                                <h4 class="text-success">Understanding Agricultural Markets (Mandis)</h4>
+                                <hr>
+                                <p>Agricultural markets, commonly known as "Mandis" in India, are regulated marketplaces where farmers can sell their agricultural produce directly to traders, retailers, and sometimes consumers.</p>
+                                
+                                <h5 class="mt-4">Key Aspects of Mandis:</h5>
+                                <ul>
+                                    <li><strong>APMC Regulated:</strong> Most mandis operate under the Agricultural Produce Market Committee (APMC) regulations.</li>
+                                    <li><strong>Market Yards:</strong> Physical spaces where trading occurs, often with weighing facilities and auction platforms.</li>
+                                    <li><strong>Commission Agents:</strong> Known as "Arthiyas," they facilitate transactions between farmers and buyers.</li>
+                                    <li><strong>Price Discovery:</strong> Prices are determined through auction or negotiation based on supply and demand.</li>
+                                    <li><strong>Seasonal Variations:</strong> Prices fluctuate based on seasonal availability and market conditions.</li>
+                                </ul>
+                                
+                                <h5 class="mt-4">Major Mandis in Rajasthan:</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead class="table-success">
+                                            <tr>
+                                                <th>City</th>
+                                                <th>Major Mandis</th>
+                                                <th>Known For</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Jaipur</td>
+                                                <td>Muhana Mandi, Lal Kothi Mandi, Chomu Mandi</td>
+                                                <td>Vegetables, Fruits, Grains</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Jodhpur</td>
+                                                <td>Jodhpur Mandi, Phalodi Mandi</td>
+                                                <td>Spices, Vegetables</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Kota</td>
+                                                <td>Kota Mandi, Baran Mandi</td>
+                                                <td>Grains, Pulses, Vegetables</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Udaipur</td>
+                                                <td>Udaipur Mandi, Fatehsagar Mandi</td>
+                                                <td>Fruits, Vegetables</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Ajmer</td>
+                                                <td>Ajmer Mandi, Beawar Mandi</td>
+                                                <td>Spices, Vegetables</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Seasonal Guide -->
+                            <div class="tab-pane fade" id="seasonal" role="tabpanel" aria-labelledby="seasonal-tab">
+                                <h4 class="text-success">Seasonal Crop Guide for Rajasthan</h4>
+                                <hr>
+                                <p>Understanding seasonal crop patterns helps predict price fluctuations and availability. Here's a seasonal guide for major vegetables and fruits in Rajasthan:</p>
+                                
+                                <div class="accordion mt-4" id="seasonalAccordion">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="winterHeading">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#winterCollapse" aria-expanded="true" aria-controls="winterCollapse">
+                                                Winter Season (November - February)
+                                            </button>
+                                        </h2>
+                                        <div id="winterCollapse" class="accordion-collapse collapse show" aria-labelledby="winterHeading">
+                                            <div class="accordion-body">
+                                                <h6 class="text-success">Vegetables:</h6>
+                                                <ul>
+                                                    <li>Cauliflower, Cabbage, Carrot</li>
+                                                    <li>Peas, Spinach, Fenugreek (Methi)</li>
+                                                    <li>Radish, Turnip, Beetroot</li>
+                                                    <li>Broccoli, Capsicum</li>
+                                                </ul>
+                                                <h6 class="text-success">Fruits:</h6>
+                                                <ul>
+                                                    <li>Oranges, Kinnow</li>
+                                                    <li>Guava, Strawberry</li>
+                                                    <li>Papaya, Banana</li>
+                                                </ul>
+                                                <div class="alert alert-info mt-2">
+                                                    <strong>Price Trend:</strong> Generally lower prices for winter vegetables due to abundant supply. Best time to buy leafy vegetables and root crops.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="summerHeading">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#summerCollapse" aria-expanded="false" aria-controls="summerCollapse">
+                                                Summer Season (March - June)
+                                            </button>
+                                        </h2>
+                                        <div id="summerCollapse" class="accordion-collapse collapse" aria-labelledby="summerHeading">
+                                            <div class="accordion-body">
+                                                <h6 class="text-success">Vegetables:</h6>
+                                                <ul>
+                                                    <li>Bottle Gourd (Lauki), Ridge Gourd (Tori)</li>
+                                                    <li>Bitter Gourd (Karela), Cucumber</li>
+                                                    <li>Lady Finger (Bhindi), Pumpkin</li>
+                                                    <li>Tomato, Brinjal, Green Chillies</li>
+                                                </ul>
+                                                <h6 class="text-success">Fruits:</h6>
+                                                <ul>
+                                                    <li>Mango, Watermelon, Muskmelon</li>
+                                                    <li>Litchi, Jamun</li>
+                                                    <li>Phalsa, Summer Apples</li>
+                                                </ul>
+                                                <div class="alert alert-info mt-2">
+                                                    <strong>Price Trend:</strong> Higher prices for most vegetables due to water scarcity and heat. Fruits like watermelon and mango are in season and reasonably priced.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="monsoonHeading">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#monsoonCollapse" aria-expanded="false" aria-controls="monsoonCollapse">
+                                                Monsoon Season (July - October)
+                                            </button>
+                                        </h2>
+                                        <div id="monsoonCollapse" class="accordion-collapse collapse" aria-labelledby="monsoonHeading">
+                                            <div class="accordion-body">
+                                                <h6 class="text-success">Vegetables:</h6>
+                                                <ul>
+                                                    <li>Onion, Potato, Green Beans</li>
+                                                    <li>Cluster Beans (Guar), Corn</li>
+                                                    <li>Green Leafy Vegetables</li>
+                                                    <li>Tinda, Pointed Gourd (Parwal)</li>
+                                                </ul>
+                                                <h6 class="text-success">Fruits:</h6>
+                                                <ul>
+                                                    <li>Apples, Pears</li>
+                                                    <li>Pomegranate, Custard Apple</li>
+                                                    <li>Banana, Papaya</li>
+                                                </ul>
+                                                <div class="alert alert-info mt-2">
+                                                    <strong>Price Trend:</strong> Fluctuating prices due to supply chain disruptions caused by rains. Leafy vegetables can be expensive, while gourds are generally affordable.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mt-4 bg-light">
+                                    <div class="card-body">
+                                        <h5 class="text-success">Tips for Seasonal Buying:</h5>
+                                        <ul>
+                                            <li>Buy vegetables and fruits in their peak season for best quality and price</li>
+                                            <li>Plan your purchase early in the morning for freshest produce</li>
+                                            <li>Compare prices between different mandis using MandiBhavv</li>
+                                            <li>Buy in bulk during peak season and preserve (if possible) for off-season use</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- FAQs -->
+                            <div class="tab-pane fade" id="faq" role="tabpanel" aria-labelledby="faq-tab">
+                                <h4 class="text-success">Frequently Asked Questions</h4>
+                                <hr>
+                                <div class="accordion mt-4" id="faqAccordion">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="faq1Heading">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1Collapse" aria-expanded="true" aria-controls="faq1Collapse">
+                                                How frequently are prices updated?
+                                            </button>
+                                        </h2>
+                                        <div id="faq1Collapse" class="accordion-collapse collapse show" aria-labelledby="faq1Heading">
+                                            <div class="accordion-body">
+                                                Prices are updated daily based on the latest market trends. Our admin team collects data from various mandis across Rajasthan to ensure you have access to the most current information.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="faq2Heading">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2Collapse" aria-expanded="false" aria-controls="faq2Collapse">
+                                                Why do prices vary between different mandis?
+                                            </button>
+                                        </h2>
+                                        <div id="faq2Collapse" class="accordion-collapse collapse" aria-labelledby="faq2Heading">
+                                            <div class="accordion-body">
+                                                Price variations occur due to several factors including local supply and demand, transportation costs, storage facilities, quality of produce, and local market competition. MandiBhavv helps you identify these variations so you can make informed decisions.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="faq3Heading">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3Collapse" aria-expanded="false" aria-controls="faq3Collapse">
+                                                Can farmers use this information to decide where to sell?
+                                            </button>
+                                        </h2>
+                                        <div id="faq3Collapse" class="accordion-collapse collapse" aria-labelledby="faq3Heading">
+                                            <div class="accordion-body">
+                                                Absolutely! MandiBhavv is designed to empower farmers with transparent pricing information. By comparing prices across different mandis, farmers can make informed decisions about where to sell their produce for maximum returns.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="faq4Heading">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4Collapse" aria-expanded="false" aria-controls="faq4Collapse">
+                                                Are these retail or wholesale prices?
+                                            </button>
+                                        </h2>
+                                        <div id="faq4Collapse" class="accordion-collapse collapse" aria-labelledby="faq4Heading">
+                                            <div class="accordion-body">
+                                                MandiBhavv primarily displays wholesale prices as they occur in mandis. Retail prices in local markets may be higher due to additional costs like transportation, handling, and retailer margins.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="faq5Heading">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5Collapse" aria-expanded="false" aria-controls="faq5Collapse">
+                                                Can I request adding a new market or produce item?
+                                            </button>
+                                        </h2>
+                                        <div id="faq5Collapse" class="accordion-collapse collapse" aria-labelledby="faq5Heading">
+                                            <div class="accordion-body">
+                                                Yes! We're constantly expanding our database. If you'd like to request a new market or produce item, please use the contact form in the "Contact Us" section. We value your input and strive to make MandiBhavv as comprehensive as possible.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Contact Us -->
+                            <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                                <h4 class="text-success">Contact Us</h4>
+                                <hr>
+                                <p>We value your feedback and are here to assist you with any questions or concerns. Please feel free to reach out to us through any of the following channels:</p>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <div class="card mb-4">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-success">Contact Information</h5>
+                                                <p class="card-text">
+                                                    <strong>Email:</strong> contact.nikhim@gmail.com<br>
+                                                    <strong>Phone:</strong> +91 96674 46393<br>
+                                                    <!-- <strong>Office Hours:</strong> 9:00 AM - 6:00 PM (Mon-Sat) -->
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card mb-4">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-success">Office</h5>
+                                                <p class="card-text">
+                                                    Yadav Bhawan <br>
+                                                    Nangal Mod <br>
+                                                    Kanwarpura,chomu<br>
+                                                    Jaipur, Rajasthan - 303804
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mt-2">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-success">Send Us a Message</h5>
+                                        <form id="contactForm">
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label">Name</label>
+                                                <input type="text" class="form-control" id="name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="email" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="subject" class="form-label">Subject</label>
+                                                <input type="text" class="form-control" id="subject" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="message" class="form-label">Message</label>
+                                                <textarea class="form-control" id="message" rows="4" required></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-success">Submit</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Handle contact form submission (demo only)
+        $('#contactForm').submit(function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+            this.reset();
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,473 @@
+{% extends 'base.html' %}
+
+{% block title %}MandiBhavv - Daily Vegetable & Fruit Prices{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">Find Vegetable & Fruit Prices</h3>
+            </div>
+            <div class="card-body">
+                <form id="locationSelector" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="stateSelect" class="form-label">State</label>
+                        <select class="form-select" id="stateSelect" name="state_id">
+                            {% for state in states %}
+                                <option value="{{ state.id }}" {% if selected_state == state.id %}selected{% endif %}>{{ state.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="citySelect" class="form-label">City</label>
+                        <select class="form-select" id="citySelect" name="city_id" {% if not cities %}disabled{% endif %}>
+                            <option value="">Select City</option>
+                            {% for city in cities %}
+                                <option value="{{ city.id }}" {% if selected_city == city.id %}selected{% endif %}>{{ city.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="marketSelect" class="form-label">Market/Mandi</label>
+                        <select class="form-select" id="marketSelect" name="market_id" {% if not markets %}disabled{% endif %}>
+                            <option value="">Select Market</option>
+                            {% for market in markets %}
+                                <option value="{{ market.id }}" {% if selected_market == market.id %}selected{% endif %}>{{ market.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-success w-100">View Prices</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div id="loadingSpinner" class="position-fixed top-50 start-50 translate-middle bg-white p-4 rounded shadow d-none">
+    <div class="d-flex align-items-center">
+        <div class="spinner-border text-success me-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <strong>Loading...</strong>
+    </div>
+</div>
+
+
+
+
+
+{% if selected_market %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Current Prices</h3>
+                <form class="d-flex" onsubmit="$('#loadingSpinner').removeClass('d-none');">
+                    <input type="hidden" name="state_id" value="{{ selected_state }}">
+                    <input type="hidden" name="city_id" value="{{ selected_city }}">
+                    <input type="hidden" name="market_id" value="{{ selected_market }}">
+                    <input class="form-control me-2" type="search" placeholder="Search vegetable/fruit" name="search" value="{{ search_term or '' }}">
+                    <button class="btn btn-outline-light" type="submit">Search</button>
+                </form>
+            </div>
+            <div class="card-body">
+                {% if listings %}
+                <div class="row">
+                    {% for listing in listings %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100">
+                            <img src="{{ url_for('static', filename='uploads/' + listing.produce_type.image) }}" class="card-img-top" alt="{{ listing.produce_type.name }}" style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ listing.produce_type.name }}</h5>
+                                <p class="card-text">
+                                    <span class="badge bg-warning text-dark">{{ listing.produce_type.category|capitalize }}</span>
+                                </p>
+                                <h4 class="text-success">₹{{ listing.price }}/{{ listing.unit }}</h4>
+                                <p class="text-muted small">Last updated: {{ listing.last_updated.strftime('%d-%m-%Y %H:%M') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    No products found. {% if search_term %}Try a different search term.{% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- <div class="row">
+    <div class="col-md-12 text-center py-5">
+        <img src="{{ url_for('static', filename='images/hero.png') }}" alt="MandiBhavv" class="img-fluid mb-4" style="max-height: 300px;">
+        <h2 class="text-success">Welcome to MandiBhavv</h2>
+        <p class="lead">Select your location and nearest market to view current vegetable and fruit prices in Rajasthan.</p>
+    </div>
+</div> -->
+<div class="row">
+    <div class="col-md-12 text-center py-5">
+        <img src="{{ url_for('static', filename='images/hero.png') }}" alt="MandiBhavv" class="img-fluid mb-4" style="max-height: 300px;">
+        <h2 class="text-success">Welcome to MandiBhavv</h2>
+        <p class="lead">Select your location and nearest market to view current vegetable and fruit prices in Rajasthan.</p>
+    </div>
+</div>
+
+<!-- News Updates Section -->
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h3 class="text-success mb-4">Latest Updates</h3>
+        {% if news_updates %}
+            <div class="row">
+                {% for update in news_updates %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="text-success mb-0">{{ update.title }}</h5>
+                                    <small class="text-muted">{{ update.date_posted.strftime('%d %b, %Y') }}</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p>{{ update.content|truncate(150) }}</p>
+                                <a href="{{ url_for('all_news') }}" class="btn btn-sm btn-outline-success">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-3">
+                <a href="{{ url_for('all_news') }}" class="btn btn-success">View All Updates</a>
+            </div>
+        {% else %}
+            <div class="alert alert-info">No updates available at the moment.</div>
+        {% endif %}
+    </div>
+</div>
+
+
+
+<!-- How It Works Section -->
+<div class="row bg-light py-5 mb-5">
+    <div class="col-md-12 text-center mb-4">
+        <h3 class="text-success">How It Works</h3>
+        <p>Get updated prices in three simple steps</p>
+    </div>
+    <div class="col-md-4 text-center">
+        <div class="card h-100 border-0 bg-light">
+            <div class="card-body">
+                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                    <h3>1</h3>
+                </div>
+                <h5>Select Your State</h5>
+                <p>Choose Rajasthan or other available states from the dropdown menu.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 text-center">
+        <div class="card h-100 border-0 bg-light">
+            <div class="card-body">
+                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                    <h3>2</h3>
+                </div>
+                <h5>Choose Your City</h5>
+                <p>Select your city to find nearby agricultural markets (mandis).</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 text-center">
+        <div class="card h-100 border-0 bg-light">
+            <div class="card-body">
+                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                    <h3>3</h3>
+                </div>
+                <h5>View Current Prices</h5>
+                <p>Get real-time prices of fruits and vegetables at your selected market.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mb-5">
+    <div class="col-md-6">
+        <h3 class="text-success mb-4">Why Use MandiBhavv?</h3>
+        <div class="d-flex mb-3">
+            <div class="me-3">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
+            </div>
+            <div>
+                <h5>Real-Time Price Updates</h5>
+                <p>Our dedicated team visits markets daily to update prices, ensuring you have the most current information.</p>
+            </div>
+        </div>
+        <div class="d-flex mb-3">
+            <div class="me-3">
+                <i class="bi bi-graph-up text-success" style="font-size: 2rem;"></i>
+            </div>
+            <div>
+                <h5>Price Trends</h5>
+                <p>Track how prices change over time, helping you make informed decisions about when to buy or sell.</p>
+            </div>
+        </div>
+        <div class="d-flex mb-3">
+            <div class="me-3">
+                <i class="bi bi-geo-alt-fill text-success" style="font-size: 2rem;"></i>
+            </div>
+            <div>
+                <h5>Multiple Markets</h5>
+                <p>Compare prices across different markets in your area to find the best deals.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="text-success mb-4">For Farmers</h3>
+                <p>MandiBhavv helps farmers make informed decisions about where and when to sell their produce for maximum profit. No more relying on middlemen for price information!</p>
+                <ul>
+                    <li>Know the current market rates before you transport your goods</li>
+                    <li>Compare prices across multiple markets in your region</li>
+                    <li>Plan your harvest based on price trends</li>
+                </ul>
+                <h3 class="text-success mb-4 mt-4">For Consumers</h3>
+                <p>Find the best prices for fresh fruits and vegetables in your area. Plan your shopping to get quality produce at reasonable prices.</p>
+                <a href="#search-section" class="btn btn-success mt-3">Find Prices Now</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Testimonials Section -->
+<div class="row bg-light py-5 mb-5">
+    <div class="col-md-12 text-center mb-4">
+        <h3 class="text-success">What Our Users Say</h3>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                        <span>RS</span>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">Chotmal Bagra</h5>
+                        <small>Vegetable Farmer,Chomu, Jaipur</small>
+                    </div>
+                </div>
+                <p class="card-text">"MandiBhavv has transformed how I sell my vegetables. I now know exactly which mandi offers the best prices, saving me time and increasing my profits."</p>
+                <div class="text-warning">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                        <span>SD</span>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">Shyam Lal</h5>
+                        <small>Fruit Seller, Jodhpur</small>
+                    </div>
+                </div>
+                <p class="card-text">"I check MandiBhavv every morning before buying inventory for my fruit stall. It helps me negotiate better with wholesalers and maintain reasonable prices for my customers."</p>
+                <div class="text-warning">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-half"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                        <span>MK</span>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">Roshan</h5>
+                        <small>Restaurant Owner, Jaipur</small>
+                    </div>
+                </div>
+                <p class="card-text">"As a restaurant owner, managing food costs is crucial. MandiBhavv helps me plan my purchases and menu pricing by keeping me updated on vegetable price trends."</p>
+                <div class="text-warning">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- #ad -->
+<!-- #ad -->
+{% if homepage_ads %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div id="homeAdCarousel" class="carousel slide" data-bs-ride="carousel">
+            {% if homepage_ads|length > 1 %}
+            <div class="carousel-indicators">
+                {% for ad in homepage_ads %}
+                <button type="button" data-bs-target="#homeAdCarousel" data-bs-slide-to="{{ loop.index0 }}" {% if loop.first %}class="active"{% endif %} aria-label="Slide {{ loop.index }}"></button>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="carousel-inner rounded shadow">
+                {% for ad in homepage_ads %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    {% if ad.link_url %}
+                    <a href="{{ ad.link_url }}" target="_blank">
+                    {% endif %}
+                        <img src="{{ url_for('static', filename='uploads/' + ad.image) }}" class="d-block w-100" alt="{{ ad.title }}" style="object-fit: contain; width: 100%; height: auto; max-height: 300px;">
+                        <div class="carousel-caption d-block">
+                            <h5 class="bg-light bg-opacity-75 text-dark p-2 rounded d-inline-block">{{ ad.title }}</h5>
+                        </div>
+                    {% if ad.link_url %}
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% if homepage_ads|length > 1 %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#homeAdCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon bg-success bg-opacity-50 rounded-circle p-2" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#homeAdCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon bg-success bg-opacity-50 rounded-circle p-2" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+<!-- # ad ends -->
+
+
+<!-- Download App Section
+<div class="row mb-5">
+    <div class="col-md-6 d-flex align-items-center">
+        <div>
+            <h3 class="text-success mb-3">Get the MandiBhavv App</h3>
+            <p class="mb-4">Download our mobile app to access current mandi prices anytime, anywhere. Set price alerts and get notifications when prices change significantly.</p>
+            <div class="d-flex flex-wrap">
+                <a href="#" class="btn btn-dark me-2 mb-2">
+                    <i class="bi bi-google-play me-2"></i> Google Play
+                </a>
+                <a href="#" class="btn btn-dark mb-2">
+                    <i class="bi bi-apple me-2"></i> App Store
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 text-center">
+        <img src="{{ url_for('static', filename='images/hero.png') }}" alt="MandiBhavv App" class="img-fluid" style="max-height: 400px;">
+    </div>
+</div>
+ -->
+<!-- Call to Action -->
+<div class="row bg-success text-white p-5 rounded mb-5">
+    <div class="col-md-8">
+        <h3>Want to contribute to our price database?</h3>
+        <p>Join our team of price updaters and help farmers across Rajasthan get accurate information.</p>
+    </div>
+    <div class="col-md-4 d-flex align-items-center justify-content-md-end mt-3 mt-md-0">
+        <a href="{{ url_for('work_with_us') }}" class="btn" style="background-color: white; color: rgb(199, 136, 0);">Work With Us</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+    const loadingSpinner = $('#loadingSpinner');
+    
+    // Show spinner during AJAX requests
+    $(document).ajaxStart(function() {
+        loadingSpinner.removeClass('d-none');
+    });
+    
+    $(document).ajaxStop(function() {
+        loadingSpinner.addClass('d-none');
+    });
+    
+    // Handle state selection change
+    $('#stateSelect').change(function() {
+        const stateId = $(this).val();
+        
+        // Clear city and market dropdowns
+        $('#citySelect').empty().append('<option value="">Select City</option>').prop('disabled', true);
+        $('#marketSelect').empty().append('<option value="">Select Market</option>').prop('disabled', true);
+        
+        if (stateId) {
+            // Fetch cities for the selected state
+            $.getJSON(`/get_cities/${stateId}`, function(data) {
+                const cities = data.cities;
+                if (cities.length > 0) {
+                    $('#citySelect').prop('disabled', false);
+                    cities.forEach(function(city) {
+                        $('#citySelect').append(`<option value="${city.id}">${city.name}</option>`);
+                    });
+                }
+            });
+        }
+    });
+    
+    // Handle city selection change
+    $('#citySelect').change(function() {
+        const cityId = $(this).val();
+        
+        // Clear market dropdown
+        $('#marketSelect').empty().append('<option value="">Select Market</option>').prop('disabled', true);
+        
+        if (cityId) {
+            // Fetch markets for the selected city
+            $.getJSON(`/get_markets/${cityId}`, function(data) {
+                const markets = data.markets;
+                if (markets.length > 0) {
+                    $('#marketSelect').prop('disabled', false);
+                    markets.forEach(function(market) {
+                        $('#marketSelect').append(`<option value="${market.id}">${market.name}</option>`);
+                    });
+                }
+            });
+        }
+    });
+
+    // Also show loading spinner when form is submitted
+    $('#locationSelector').on('submit', function() {
+        loadingSpinner.removeClass('d-none');
+    });
+});
+
+
+
+</script>
+{% endblock %}
